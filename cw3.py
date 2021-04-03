@@ -43,7 +43,7 @@ for df in [ab, census, ks4, sch]:
 # ks4 needs to be the leading data set as the others include primary schools as well as secondary
 ks4['RECTYPE'].value_counts()
 # Rectypes 4, 7 and 5 are not schools and their value counts add to the number of missing URNs so these can be dropped 
-ks4 = ks4.drop(ks4[(ks4['RECTYPE'] >= 4) & (ks4['RECTYPE'] <= 7)].index)
+ks4 = ks4.drop(ks4[(ks4['RECTYPE'] >= 4) & (ks4['RECTYPE'] <= 7)].index).reset_index(drop=True)
 # check the drop was correct 
 ks4['RECTYPE'].value_counts()
 ks4.isnull().sum(axis = 0)
@@ -61,13 +61,38 @@ census['URN'].nunique() # out of 23942 rows, 23940 are unique
 census[census['URN'].duplicated()]
 # Rows in ab which URN's aren't unique (3 rows) are where URN is missing - these are National summary rows so can be dropped 
 # Rows in census in which URN's aren't unique (2 rows) are rows where URN = 'NAT', these are also national sum
-ab = ab.drop(ab[ab['URN'].isnull()].index)
-census = census.drop(census[census['URN'] == 'NAT'].index)
+ab = ab.drop(ab[ab['URN'].isnull()].index).reset_index(drop=True)
+census = census.drop(census[census['URN'] == 'NAT'].index).reset_index(drop=True)
 
 # ALl datasets now have no missing URNs and unique URNs 
+# See what else is missing from Ks4
+ks4.isnull().sum(axis = 0)
+# Drop cases where attainment 8 score is missing as this will be the predicted value so is necessary 
+ks4 = ks4.drop(ks4[ks4['ATT8SCR'].isnull()].index).reset_index(drop=True)
 
+# Start joining - first with sch
+# Full join with ks4 and sch loses no data - everything in ks4 is in sch (5516 rows)
+ks4_sch = ks4.join(sch.set_index('URN'), on='URN', how='inner', lsuffix='_ks4', rsuffix='_sch')
+ks4_sch.isnull().sum(axis = 0)
+# New data set without the repeat variables 
+ks4_sch = pd.DataFrame(ks4_sch.iloc[
+    :, [0, 2, 3, 4, 5, 6, 7,\
+         8, 10, 11, 12, 13, 14, 15,\
+             16, 18, 19, 22, 24, 25, 26]]) 
+# For any missing town value, replace with other town column if present there
+ks4_sch.TOWN_ks4.fillna(ks4_sch.TOWN_sch,inplace=True)
+ks4_sch = ks4_sch.drop(['TOWN_sch'], axis=1)
 
-sch['ISSECONDARY'].value_counts()
-sch = sch.drop(sch[sch['ISSECONDARY'] == 0].index)
-ks4.join(sch.set_index('URN'), on='URN', how='outer', lsuffix='_ks4', rsuffix='_sch')
+# Now with census (left join to keep all KS4 data)
+ks4_sch_census = ks4_sch.join(census.set_index('URN'), on='URN', how='left', rsuffix='_cen')
+ks4_sch_census.isnull().sum(axis = 0)
+ks4_sch_census = pd.DataFrame(ks4_sch_census.iloc[
+    :, [0, 1, 2, 3, 4, 5, 6, 7,\
+         8, 9, 10, 11, 13, 14, 15,\
+             16, 17, 18, 19, 24, 26]]) 
 
+# Join with ab
+final = ks4_sch_census.join(ab.set_index('URN'), on='URN', how='left', rsuffix='_ab') 
+final.isnull().sum(axis = 0)
+final = final.drop(['NUMFSM', 'LA_ab', 'ESTAB'], axis=1)
+final[final['TOWN_ks4'].isnull()]
