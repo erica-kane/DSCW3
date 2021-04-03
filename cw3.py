@@ -4,29 +4,25 @@ import pandas as pd
 # Read in the data files 
 ab_full = pd.read_excel('2018-2019/england_abs.xlsx', dtype={"URN": str})
 census_full = pd.read_excel('2018-2019/england_census.xlsx', dtype={"URN": str})
-ks4_full = pd.read_excel('2018-2019/england_ks4final.xlsx', dtype={"URN": str})
+ks4_full = pd.read_excel('2018-2019/england_ks4final.xlsx', dtype={"URN": str}, na_values=['NE', 'NP', 'SUPP'])
 sch_full = pd.read_excel('2018-2019/england_school_information.xlsx', dtype={"URN": str})
 
 # Cut each data set to the relevant number of variables 
 
 # Drop percentage absentees - taken absoloute number instead 
-ab_full.head()
 ab = ab_full.drop(['PPERSABS10'], axis=1)
 
 # Get the index of the variables of interest taking their name from metadata 
 # Create a final dataset with these variables using iloc
-census_full.head()
 census_full.columns.get_loc('NUMFSM')
 census = pd.DataFrame(census_full.iloc[:, [0, 1, 2, 3, 4, 9, 13, 19]]) 
 
-ks4_full.head()
 ks4_full.columns.get_loc('EBACCAPS')
 ks4 = pd.DataFrame(ks4_full.iloc[
     :, [0, 1, 2, 3, 4, 9, 10, 16,\
          17, 18, 20, 26, 41, 45, 57,\
               60, 66, 99]]) 
 
-sch_full.head()
 sch_full.columns.get_loc('ADMPOL')
 sch = pd.DataFrame(sch_full.iloc[
     :, [0, 1, 2, 3, 5, 9, 10, 11, \
@@ -94,5 +90,34 @@ ks4_sch_census = pd.DataFrame(ks4_sch_census.iloc[
 # Join with ab
 final = ks4_sch_census.join(ab.set_index('URN'), on='URN', how='left', rsuffix='_ab') 
 final.isnull().sum(axis = 0)
-final = final.drop(['NUMFSM', 'LA_ab', 'ESTAB'], axis=1)
-final[final['TOWN_ks4'].isnull()]
+final = final.drop(['LA_ab', 'ESTAB'], axis=1)
+
+# Clarify variable names 
+final = final.rename(columns={"RECTYPE": "record",
+"ESTAB_ks4": "estab_numb",
+'URN': 'urn',
+'SCHNAME_ks4': 'school_name',
+'TOWN_ks4': 'town',
+'PCODE': 'postcode',
+'NFTYPE': 'school_type',
+'RELDENOM': 'religion',
+'EGENDER': 'gender',
+'TOTPUPS': 'total_pupils',
+'TFSM6CLA1A': 'disadvantage',
+'TEALGRP2': 'eal',
+'ATT8SCR': 'att8_score',
+'ATT8SCREBAC': 'att8_ebacc',
+'LANAME':'la_name',
+'LA': 'la_code',
+'SCHSTATUS': 'status',
+'MINORGROUP': 'school_type',
+'SCHOOLTYPE': 'school_type12',
+'NUMFSM': 'fsm',
+'TSENELSE': 'sen',
+'PERCTOT': 'per_abs'
+})
+
+# Drop na's from final dataframe 
+final = final.dropna()
+
+final.to_csv('final.csv')
