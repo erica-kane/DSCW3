@@ -99,7 +99,7 @@ final = final.rename(columns={"RECTYPE": "record",
 'SCHNAME_ks4': 'school_name',
 'TOWN_ks4': 'town',
 'PCODE': 'postcode',
-'NFTYPE': 'school_type',
+'NFTYPE': 'school_type1',
 'RELDENOM': 'religion',
 'EGENDER': 'gender',
 'TOTPUPS': 'total_pupils',
@@ -110,8 +110,8 @@ final = final.rename(columns={"RECTYPE": "record",
 'LANAME':'la_name',
 'LA': 'la_code',
 'SCHSTATUS': 'status',
-'MINORGROUP': 'school_type',
-'SCHOOLTYPE': 'school_type12',
+'MINORGROUP': 'school_type2',
+'SCHOOLTYPE': 'school_type3',
 'NUMFSM': 'fsm',
 'TSENELSE': 'sen',
 'PERCTOT': 'per_abs'
@@ -120,4 +120,4 @@ final = final.rename(columns={"RECTYPE": "record",
 # Drop na's from final dataframe 
 final = final.dropna()
 
-final.to_csv('final.csv')
+#final.to_csv('final.csv')
