@@ -1,4 +1,4 @@
-,record,estab_numb,urn,school_name,town,postcode,school_type,religion,gender,total_pupils,disadvantage,eal,att8_score,att8_ebacc,la_name,la_code,status,school_type,school_type12,sen,fsm,per_abs
+,record,estab_numb,urn,school_name,town,postcode,school_type1,religion,gender,total_pupils,disadvantage,eal,att8_score,att8_ebacc,la_name,la_code,status,school_type2,school_type3,sen,fsm,per_abs
 2,1,4104.0,100049,Haverstock School,London,NW3 2BQ,CY,Does not apply,MIXED,950,117.0,141.0,42.4,12.5,Camden,202,Open,Maintained school,Community school,30.0,391.0,6.9
 3,1,4166.0,100050,Parliament Hill School,London,NW5 1RL,CY,Does not apply,GIRLS,1170,94.0,73.0,58.7,17.5,Camden,202,Open,Maintained school,Community school,15.0,315.0,5.3
 7,1,4611.0,100054,The Camden School for Girls,London,NW5 2DB,VA,None,GIRLS,1025,38.0,59.0,63.4,19.2,Camden,202,Open,Maintained school,Voluntary aided school,15.0,132.0,3.9
