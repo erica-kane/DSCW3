@@ -82,6 +82,8 @@ ks4_sch = ks4_sch.drop(['TOWN_sch'], axis=1)
 # Now with census (left join to keep all KS4 data)
 ks4_sch_census = ks4_sch.join(census.set_index('URN'), on='URN', how='left', rsuffix='_cen')
 ks4_sch_census.isnull().sum(axis = 0)
+ks4_sch_census.TEALGRP2.fillna(ks4_sch_census.NUMEAL,inplace=True)
+ks4_sch_census.TSENELSE.fillna(ks4_sch_census.SEN_ALL,inplace=True)
 ks4_sch_census = pd.DataFrame(ks4_sch_census.iloc[
     :, [0, 1, 2, 3, 4, 5, 6, 7,\
          8, 9, 10, 11, 13, 14, 15,\
