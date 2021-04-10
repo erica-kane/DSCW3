@@ -90,12 +90,12 @@ ks4_sch_census = pd.DataFrame(ks4_sch_census.iloc[
              16, 17, 18, 19, 24, 26]]) 
 
 # Join with ab
-final = ks4_sch_census.join(ab.set_index('URN'), on='URN', how='left', rsuffix='_ab') 
-final.isnull().sum(axis = 0)
-final = final.drop(['LA_ab', 'ESTAB'], axis=1)
+final_na = ks4_sch_census.join(ab.set_index('URN'), on='URN', how='left', rsuffix='_ab') 
+final_na.isnull().sum(axis = 0)
+final_na = final_na.drop(['LA_ab', 'ESTAB'], axis=1)
 
 # Clarify variable names 
-final = final.rename(columns={"RECTYPE": "record",
+final_na = final_na.rename(columns={"RECTYPE": "record",
 "ESTAB_ks4": "estab_numb",
 'URN': 'urn',
 'SCHNAME_ks4': 'school_name',
@@ -119,7 +119,9 @@ final = final.rename(columns={"RECTYPE": "record",
 'PERCTOT': 'per_abs'
 })
 
+final_na.to_csv('final_na.csv')
+
 # Drop na's from final dataframe 
-final = final.dropna().reset_index(drop=True)
+final = final_na.dropna().reset_index(drop=True)
 
 final.to_csv('final.csv')
