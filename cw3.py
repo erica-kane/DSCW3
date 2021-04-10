@@ -118,6 +118,6 @@ final = final.rename(columns={"RECTYPE": "record",
 })
 
 # Drop na's from final dataframe 
-final = final.dropna()
+final = final.dropna().reset_index(drop=True)
 
-#final.to_csv('final.csv')
+final.to_csv('final.csv')
